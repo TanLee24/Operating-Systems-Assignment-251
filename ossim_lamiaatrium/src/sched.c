@@ -14,14 +14,19 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+
 static struct queue_t ready_queue;
 static struct queue_t run_queue;
 static pthread_mutex_t queue_lock;
 
 static struct queue_t running_list;
+
 #ifdef MLQ_SCHED
 static struct queue_t mlq_ready_queue[MAX_PRIO];
-static int slot[MAX_PRIO];
+static int slot[MAX_PRIO]; //quota
+static int current_slot[MAX_PRIO]; //number of proc taken out
+static int current_prior = 0; //prior that we are processing
+
 #endif
 
 int queue_empty(void) {
@@ -41,6 +46,7 @@ void init_scheduler(void) {
 	for (i = 0; i < MAX_PRIO; i ++) {
 		mlq_ready_queue[i].size = 0;
 		slot[i] = MAX_PRIO - i; 
+		current_slot[i] = 0;
 	}
 #endif
 	ready_queue.size = 0;
@@ -62,11 +68,38 @@ struct pcb_t * get_mlq_proc(void) {
 	pthread_mutex_lock(&queue_lock);
 	/*TODO: get a process from PRIORITY [ready_queue].
 	 *      It worth to protect by a mechanism.
-	 * */
 
-	if (proc != NULL)
-		enqueue(&running_list, proc);
-	return proc;	
+	 * int processed_priorities starts counting when a mlq_ready_queue cant be taken out anymore
+	 * current_prior tracks the prior that we are extracting
+	 * */
+	int processed_priorities = 0;
+
+	while(processed_priorities < MAX_PRIO)
+	{
+		if(!empty(&mlq_ready_queue[current_prior]) && 
+			current_slot[current_prior] < slot[current_prior])
+		{
+			proc = dequeue(&mlq_ready_queue[current_prior]);
+			current_slot[current_prior]++;
+
+			pthread_mutex_unlock(&queue_lock);
+			return proc;
+		}
+		
+		processed_priorities++;
+		current_prior++;
+		if(current_prior >= MAX_PRIO) current_prior = 0;
+	}
+
+	// next round occur
+	current_prior = 0;
+	for(int i = 0; i < MAX_PRIO; i++)
+	{
+		current_slot[i] = 0;
+	}
+
+	pthread_mutex_unlock(&queue_lock);
+	return NULL;	
 }
 
 void put_mlq_proc(struct pcb_t * proc) {
@@ -119,7 +152,7 @@ struct pcb_t * get_proc(void) {
 	 *       It worth to protect by a mechanism.
 	 * 
 	 */
-
+	if(!empty(&ready_queue)) proc = dequeue(&ready_queue);
 	pthread_mutex_unlock(&queue_lock);
 
 	return proc;
@@ -133,9 +166,8 @@ void put_proc(struct pcb_t * proc) {
 	 *       It worth to protect by a mechanism.
 	 * 
 	 */
-
 	pthread_mutex_lock(&queue_lock);
-	enqueue(&run_queue, proc);
+	enqueue(&ready_queue, proc);
 	pthread_mutex_unlock(&queue_lock);
 }
 

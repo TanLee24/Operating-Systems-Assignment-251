@@ -8,7 +8,10 @@
 
 struct queue_t {
 	struct pcb_t * proc[MAX_QUEUE_SIZE];
-	int size;
+	
+ 	int head;   /* index of first element */
+    int tail;   /* index one-past-last element */
+    int size;   /* number of elements */
 };
 
 void enqueue(struct queue_t * q, struct pcb_t * proc);
