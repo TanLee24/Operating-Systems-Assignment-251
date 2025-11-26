@@ -100,6 +100,3 @@ struct pcb_t * load(const char * path) {
 	}
 	return proc;
 }
-
-
-

@@ -19,6 +19,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+static volatile int memphy_lock = 0;
+
+static void enter_critical(void) {
+   while (__sync_lock_test_and_set(&memphy_lock, 1));
+}
+
+static void exit_critical(void) {
+   __sync_lock_release(&memphy_lock);
+}
+
 /*
  *  MEMPHY_mv_csr - move MEMPHY cursor
  *  @mp: memphy struct
@@ -67,14 +77,17 @@ int MEMPHY_seq_read(struct memphy_struct *mp, addr_t addr, BYTE *value)
  */
 int MEMPHY_read(struct memphy_struct *mp, addr_t addr, BYTE *value)
 {
-   if (mp == NULL)
-      return -1;
+   if (mp == NULL) return -1;
+
+   enter_critical(); 
 
    if (mp->rdmflg)
       *value = mp->storage[addr];
    else /* Sequential access device */
-      return MEMPHY_seq_read(mp, addr, value);
+      MEMPHY_seq_read(mp, addr, value); 
 
+   exit_critical();
+   
    return 0;
 }
 
@@ -107,13 +120,16 @@ int MEMPHY_seq_write(struct memphy_struct *mp, addr_t addr, BYTE value)
  */
 int MEMPHY_write(struct memphy_struct *mp, addr_t addr, BYTE data)
 {
-   if (mp == NULL)
-      return -1;
+   if (mp == NULL) return -1;
+
+   enter_critical(); // LOCK
 
    if (mp->rdmflg)
       mp->storage[addr] = data;
    else /* Sequential access device */
-      return MEMPHY_seq_write(mp, addr, data);
+      MEMPHY_seq_write(mp, addr, data);
+
+   exit_critical(); // UNLOCK
 
    return 0;
 }
@@ -152,19 +168,20 @@ int MEMPHY_format(struct memphy_struct *mp, int pagesz)
 
 int MEMPHY_get_freefp(struct memphy_struct *mp, addr_t *retfpn)
 {
+   enter_critical(); // LOCK
+
    struct framephy_struct *fp = mp->free_fp_list;
 
-   if (fp == NULL)
+   if (fp == NULL) {
+      exit_critical(); 
       return -1;
+   }
 
    *retfpn = fp->fpn;
    mp->free_fp_list = fp->fp_next;
-
-   /* MEMPHY is iteratively used up until its exhausted
-    * No garbage collector acting then it not been released
-    */
    free(fp);
 
+   exit_critical(); // UNLOCK
    return 0;
 }
 
@@ -173,19 +190,23 @@ int MEMPHY_dump(struct memphy_struct *mp)
   /*TODO dump memphy contnt mp->storage
    *     for tracing the memory content
    */
+   if (mp == NULL || mp->storage == NULL)
+      return -1;
    return 0;
 }
 
 int MEMPHY_put_freefp(struct memphy_struct *mp, addr_t fpn)
 {
+   enter_critical(); // LOCK
+
    struct framephy_struct *fp = mp->free_fp_list;
    struct framephy_struct *newnode = malloc(sizeof(struct framephy_struct));
 
-   /* Create new node with value fpn */
    newnode->fpn = fpn;
    newnode->fp_next = fp;
    mp->free_fp_list = newnode;
 
+   exit_critical(); // UNLOCK
    return 0;
 }
 

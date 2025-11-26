@@ -72,7 +72,7 @@ int __alloc(struct pcb_t *caller, int vmaid, int rgid, addr_t size, addr_t *allo
   /*Allocate at the toproof */
   pthread_mutex_lock(&mmvm_lock);
   struct vm_rg_struct rgnode;
-  struct vm_area_struct *cur_vma = get_vma_by_num(caller->krnl->mm, vmaid);
+  struct vm_area_struct *cur_vma = get_vma_by_num(caller->mm, vmaid);
 
   if(cur_vma == NULL){
     pthread_mutex_unlock(&mmvm_lock);
@@ -81,8 +81,8 @@ int __alloc(struct pcb_t *caller, int vmaid, int rgid, addr_t size, addr_t *allo
 
   if (get_free_vmrg_area(caller, vmaid, size, &rgnode) == 0)
   {
-    caller->krnl->mm->symrgtbl[rgid].rg_start = rgnode.rg_start;
-    caller->krnl->mm->symrgtbl[rgid].rg_end = rgnode.rg_end;
+    caller->mm->symrgtbl[rgid].rg_start = rgnode.rg_start;
+    caller->mm->symrgtbl[rgid].rg_end = rgnode.rg_end;
  
     *alloc_addr = rgnode.rg_start;
 
@@ -126,8 +126,8 @@ int __alloc(struct pcb_t *caller, int vmaid, int rgid, addr_t size, addr_t *allo
     return -1;
   }
   /*Successful increase limit */
-  caller->krnl->mm->symrgtbl[rgid].rg_start = old_sbrk;
-  caller->krnl->mm->symrgtbl[rgid].rg_end = old_sbrk + size;
+  caller->mm->symrgtbl[rgid].rg_start = old_sbrk;
+  caller->mm->symrgtbl[rgid].rg_end = old_sbrk + size;
 
   *alloc_addr = old_sbrk;
 
@@ -154,7 +154,7 @@ int __free(struct pcb_t *caller, int vmaid, int rgid)
   }
 
   /* TODO: Manage the collect freed region to freerg_list */
-  struct vm_rg_struct *rgnode = get_symrg_byid(caller->krnl->mm, rgid);
+  struct vm_rg_struct *rgnode = get_symrg_byid(caller->mm, rgid);
 
   if (rgnode->rg_start == 0 && rgnode->rg_end == 0)
   {
@@ -170,7 +170,7 @@ int __free(struct pcb_t *caller, int vmaid, int rgid)
   rgnode->rg_next = NULL;
 
   /* Merge with adjacent regions in free list */
-  struct vm_rg_struct *rg_list = caller->krnl->mm->mmap->vm_freerg_list;
+  struct vm_rg_struct *rg_list = caller->mm->mmap->vm_freerg_list;
   struct vm_rg_struct *prev = NULL;
   
   while (rg_list != NULL)
@@ -183,7 +183,7 @@ int __free(struct pcb_t *caller, int vmaid, int rgid)
       if (prev != NULL)
         prev->rg_next = freerg_node;
       else
-        caller->krnl->mm->mmap->vm_freerg_list = freerg_node;
+        caller->mm->mmap->vm_freerg_list = freerg_node;
       free(rg_list);
       break;
     }
@@ -203,7 +203,7 @@ int __free(struct pcb_t *caller, int vmaid, int rgid)
 
   if (rg_list == NULL)  /* No merge occurred */
   {
-    enlist_vm_freerg_list(caller->krnl->mm, freerg_node);
+    enlist_vm_freerg_list(caller->mm, freerg_node);
   }
 
   pthread_mutex_unlock(&mmvm_lock);
@@ -277,7 +277,7 @@ int pg_getpage(struct mm_struct *mm, int pgn, int *fpn, struct pcb_t *caller)
     addr_t tgtfpn;
 
     /* Find victim page */
-    if (find_victim_page(caller->krnl->mm, &vicpgn) == -1)
+    if (find_victim_page(caller->mm, &vicpgn) == -1)
     {
       /* No victim page found, probably no page has been loaded yet */
       /* Get a free frame in MEMRAM */
@@ -331,13 +331,13 @@ int pg_getpage(struct mm_struct *mm, int pgn, int *fpn, struct pcb_t *caller)
       }
 
       /* Free the frame in swap space */
-      MEMPHY_put_freefp(caller->krnl->active_mswp, swpfpn);
+      MEMPHY_put_freefp(caller->active_mswp, swpfpn);
     }
 
     /* Update page table for the new page */
     pte_set_fpn(caller, pgn, tgtfpn);
     /* Add the new page to the FIFO list for page replacement */
-    enlist_pgn_node(&caller->krnl->mm->fifo_pgn, pgn);
+    enlist_pgn_node(&caller->mm->fifo_pgn, pgn);
   }
 
   *fpn = PAGING_FPN(pte_get_entry(caller,pgn));
@@ -365,7 +365,7 @@ int pg_getval(struct mm_struct *mm, int addr, BYTE *data, struct pcb_t *caller)
   struct sc_regs regs;
   regs.a1 = SYSMEM_IO_READ;
   regs.a2 = phyaddr;
-  regs.a3 = (uint32_t)data;
+  regs.a3 = (uint32_t)(uintptr_t)data;
   int sc_res = syscall(caller->krnl, caller->pid, 17, &regs);
 
   if (sc_res < 0)
@@ -416,7 +416,7 @@ int pg_setval(struct mm_struct *mm, int addr, BYTE value, struct pcb_t *caller)
 int __read(struct pcb_t *caller, int vmaid, int rgid, addr_t offset, BYTE *data)
 {
   pthread_mutex_lock(&mmvm_lock);
-  struct vm_rg_struct *currg = get_symrg_byid(caller->krnl->mm, rgid);
+  struct vm_rg_struct *currg = get_symrg_byid(caller->mm, rgid);
 
   if (currg == NULL || offset < 0 || offset >= (currg->rg_end - currg->rg_start))
   {
@@ -424,7 +424,7 @@ int __read(struct pcb_t *caller, int vmaid, int rgid, addr_t offset, BYTE *data)
     return -1;
   }
 
-  pg_getval(caller->krnl->mm, currg->rg_start + offset, data, caller);
+  pg_getval(caller->mm, currg->rg_start + offset, data, caller);
   pthread_mutex_unlock(&mmvm_lock);
   return 0;
 }
@@ -461,9 +461,9 @@ int libread(
 int __write(struct pcb_t *caller, int vmaid, int rgid, addr_t offset, BYTE value)
 {
   pthread_mutex_lock(&mmvm_lock);
-  struct vm_rg_struct *currg = get_symrg_byid(caller->krnl->mm, rgid);
+  struct vm_rg_struct *currg = get_symrg_byid(caller->mm, rgid);
 
-  struct vm_area_struct *cur_vma = get_vma_by_num(caller->krnl->mm, vmaid);
+  struct vm_area_struct *cur_vma = get_vma_by_num(caller->mm, vmaid);
 
   if (currg == NULL || cur_vma == NULL || offset < 0 || offset >= currg->rg_end - currg->rg_start) /* Invalid memory identify */
   {
@@ -471,7 +471,7 @@ int __write(struct pcb_t *caller, int vmaid, int rgid, addr_t offset, BYTE value
     return -1;
   }
 
-  pg_setval(caller->krnl->mm, currg->rg_start + offset, value, caller);
+  pg_setval(caller->mm, currg->rg_start + offset, value, caller);
 
   pthread_mutex_unlock(&mmvm_lock);
   return 0;
@@ -495,7 +495,6 @@ int libwrite(
 #endif
   MEMPHY_dump(proc->krnl->mram);
 #endif
-
   return val;
 }
 
@@ -512,7 +511,7 @@ int free_pcb_memphy(struct pcb_t *caller)
 
   for (pagenum = 0; pagenum < PAGING_MAX_PGN; pagenum++)
   {
-    pte = caller->krnl->mm->pgd[pagenum];
+    pte = caller->mm->pgd[pagenum];
 
     if (PAGING_PAGE_PRESENT(pte))
     {
@@ -571,7 +570,7 @@ int find_victim_page(struct mm_struct *mm, addr_t *retpgn)
  */
 int get_free_vmrg_area(struct pcb_t *caller, int vmaid, int size, struct vm_rg_struct *newrg)
 {
-  struct vm_area_struct *cur_vma = get_vma_by_num(caller->krnl->mm, vmaid);
+  struct vm_area_struct *cur_vma = get_vma_by_num(caller->mm, vmaid);
   
   if (cur_vma == NULL)
     return -1;
