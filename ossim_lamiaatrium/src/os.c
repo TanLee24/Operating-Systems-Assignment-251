@@ -1,4 +1,3 @@
-
 #include "cpu.h"
 #include "timer.h"
 #include "sched.h"
@@ -14,6 +13,8 @@ static int time_slot;
 static int num_cpus;
 static int done = 0;
 static struct krnl_t os;
+
+pthread_mutex_t mem_lock;
 
 #ifdef MM_PAGING
 static int memramsz;
@@ -123,8 +124,8 @@ static void * ld_routine(void * args) {
 			next_slot(timer_id);
 		}
 #ifdef MM_PAGING
-		krnl->mm = malloc(sizeof(struct mm_struct));
-		init_mm(krnl->mm, proc);
+		proc->mm = malloc(sizeof(struct mm_struct));
+        init_mm(proc->mm, proc);
 		krnl->mram = mram;
 		krnl->mswp = mswp;
 		krnl->active_mswp = active_mswp;
@@ -156,20 +157,11 @@ static void read_config(const char * path) {
 #ifdef MM_PAGING
 	int sit;
 #ifdef MM_FIXED_MEMSZ
-	/* We provide here a back compatible with legacy OS simulatiom config file
-         * In which, it have no addition config line for Mema, keep only one line
-	 * for legacy info 
-         *  [time slice] [N = Number of CPU] [M = Number of Processes to be run]
-         */
         memramsz    =  0x100000;
         memswpsz[0] = 0x1000000;
 	for(sit = 1; sit < PAGING_MAX_MMSWP; sit++)
 		memswpsz[sit] = 0;
 #else
-	/* Read input config of memory size: MEMRAM and upto 4 MEMSWP (mem swap)
-	 * Format: (size=0 result non-used memswap, must have RAM and at least 1 SWAP)
-	 *        MEM_RAM_SZ MEM_SWP0_SZ MEM_SWP1_SZ MEM_SWP2_SZ MEM_SWP3_SZ
-	*/
 	fscanf(file, "%d\n", &memramsz);
 	for(sit = 0; sit < PAGING_MAX_MMSWP; sit++)
 		fscanf(file, "%d", &(memswpsz[sit])); 
@@ -223,6 +215,8 @@ int main(int argc, char * argv[]) {
 	struct timer_id_t * ld_event = attach_event();
 	start_timer();
 
+    pthread_mutex_init(&mem_lock, NULL);
+
 #ifdef MM_PAGING
 	/* Init all MEMPHY include 1 MEMRAM and n of MEMSWP */
 	int rdmflag = 1; /* By default memphy is RANDOM ACCESS MEMORY */
@@ -245,7 +239,7 @@ int main(int argc, char * argv[]) {
 	mm_ld_args->mram = (struct memphy_struct *) &mram;
 	mm_ld_args->mswp = (struct memphy_struct**) &mswp;
 	mm_ld_args->active_mswp = (struct memphy_struct *) &mswp[0];
-        mm_ld_args->active_mswp_id = 0;
+	mm_ld_args->active_mswp_id = 0;
 #endif
 
 	/* Init scheduler */
@@ -274,6 +268,3 @@ int main(int argc, char * argv[]) {
 	return 0;
 
 }
-
-
-

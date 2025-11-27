@@ -2,6 +2,7 @@
 
 #include "common.h"
 #include "bitops.h"
+// #include <pthread.h>
 
 /* CPU Bus definition */
 #define PAGING_CPU_BUS_WIDTH 22 /* 22bit bus - MAX SPACE 4MB */
@@ -95,8 +96,8 @@
 
 /* Memory range operator */
 /* TODO implement the INCLUDE and OVERLAP checking mechanism */
-#define INCLUDE(x1,x2,y1,y2) (0)
-#define OVERLAP(x1,x2,y1,y2) (0)
+#define INCLUDE(x1,x2,y1,y2) ((y1 >= x1) && (y2 <= x2))
+#define OVERLAP(x1,x2,y1,y2) ((y1 < x2) && (x1 < y2))
 
 /* VM region prototypes */
 struct vm_rg_struct * init_vm_rg(addr_t rg_start, addr_t rg_end);

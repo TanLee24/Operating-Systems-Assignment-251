@@ -27,6 +27,8 @@
  */
 struct vm_area_struct *get_vma_by_num(struct mm_struct *mm, int vmaid)
 {
+  if (mm == NULL) return NULL;
+
   struct vm_area_struct *pvma = mm->mmap;
 
   if (mm->mmap == NULL)
@@ -48,8 +50,8 @@ struct vm_area_struct *get_vma_by_num(struct mm_struct *mm, int vmaid)
 
 int __mm_swap_page(struct pcb_t *caller, addr_t vicfpn , addr_t swpfpn)
 {
-    __swap_cp_page(caller->krnl->mram, vicfpn, caller->krnl->active_mswp, swpfpn);
-    return 0;
+  __swap_cp_page(caller->krnl->mram, vicfpn, caller->krnl->active_mswp, swpfpn);
+  return 0;
 }
 
 /*get_vm_area_node - get vm area for a number of pages
@@ -65,6 +67,7 @@ struct vm_rg_struct *get_vm_area_node_at_brk(struct pcb_t *caller, int vmaid, ad
   struct vm_rg_struct * newrg;
   
   struct vm_area_struct *cur_vma = get_vma_by_num(caller->krnl->mm, vmaid);
+
   if(cur_vma == NULL || cur_vma->sbrk + alignedsz > cur_vma->vm_end){
     return NULL;
   }
@@ -90,22 +93,14 @@ struct vm_rg_struct *get_vm_area_node_at_brk(struct pcb_t *caller, int vmaid, ad
  */
 int validate_overlap_vm_area(struct pcb_t *caller, int vmaid, addr_t vmastart, addr_t vmaend)
 {
-  //struct vm_area_struct *vma = caller->krnl->mm->mmap;
-
-  /* TODO validate the planned memory area is not overlapped */
-  if (vmastart >= vmaend)
-  {
-    return -1;
-  }
+  if (vmastart >= vmaend) return -1;
 
   struct vm_area_struct *vma = caller->krnl->mm->mmap;
   if (vma == NULL)
   {
-    //return -1;
     return 0;
   }
 
-  /* TODO validate the planned memory area is not overlapped */
   while(vma != NULL){
     if(vma->vm_id == vmaid){
       vma = vma->vm_next;
@@ -116,22 +111,6 @@ int validate_overlap_vm_area(struct pcb_t *caller, int vmaid, addr_t vmastart, a
     }
     vma = vma->vm_next;
   }
-
-  /*struct vm_area_struct *cur_area = get_vma_by_num(caller->krnl->mm, vmaid);
-  if (cur_area == NULL)
-  {
-    return -1;
-  }
-
-  while (vma != NULL)
-  {
-    if (vma != cur_area && OVERLAP(cur_area->vm_start, cur_area->vm_end, vma->vm_start, vma->vm_end))
-    {
-      return -1;
-    }
-    vma = vma->vm_next;
-  }*/
-  /* End TODO*/
 
   return 0;
 }
@@ -145,6 +124,7 @@ int validate_overlap_vm_area(struct pcb_t *caller, int vmaid, addr_t vmastart, a
 int inc_vma_limit(struct pcb_t *caller, int vmaid, addr_t inc_sz)
 {
   struct vm_area_struct *cur_vma = get_vma_by_num(caller->krnl->mm, vmaid);
+  
   if(cur_vma == NULL){
     return -1;
   }
@@ -173,5 +153,6 @@ int inc_vma_limit(struct pcb_t *caller, int vmaid, addr_t inc_sz)
 
   return 0;
 }
+
 
 // #endif

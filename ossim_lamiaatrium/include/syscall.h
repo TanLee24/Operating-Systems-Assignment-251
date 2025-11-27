@@ -10,6 +10,8 @@
 
 #include "common.h"
 
+#define SYSMEM_SWAP_OUT 0
+#define SYSMEM_SWAP_IN  1
 
 struct sc_regs {
         arg_t a1;
