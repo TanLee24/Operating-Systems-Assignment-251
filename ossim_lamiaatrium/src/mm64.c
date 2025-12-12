@@ -16,8 +16,8 @@
 #include "mm64.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <time.h>
-#include <stdlib.h>
 
 #if defined(MM64)
 
@@ -107,44 +107,32 @@ int get_pd_from_pagenum(addr_t pgn, addr_t* pgd, addr_t* p4d, addr_t* pud, addr_
  */
 int pte_set_swap(struct pcb_t *caller, addr_t pgn, int swptyp, addr_t swpoff)
 {
+  if (caller == NULL || caller->krnl == NULL || caller->krnl->mm == NULL) {
+    return -1;
+  }
+  
   struct krnl_t *krnl = caller->krnl;
-
-  // addr_t *pte;
-  // addr_t pgd=0;
-  // addr_t p4d=0;
-  // addr_t pud=0;
-  // addr_t pmd=0;
-  // addr_t pt=0;
   addr_t *pte = NULL;
-  // dummy pte alloc to avoid runtime error
-  //pte = malloc(sizeof(addr_t));
+  
 #ifdef MM64	
-  /* Get value from the system */
-  /* TODO Perform multi-level page mapping */
-  addr_t pdg_idx, p4d_idx, pud_idx, pmd_idx, pt_idx;
-  get_pd_from_pagenum(pgn, &pdg_idx, &p4d_idx, &pud_idx, &pmd_idx, &pt_idx);
-  //get_pd_from_pagenum(pgn, &pgd, &p4d, &pud, &pmd, &pt);
-  //... krnl->mm->pgd
-  //... krnl->mm->pt
-  //pte = &krnl->mm->pt;
-  return -1;
+  /* TODO: Full multi-level page table implementation needed
+   * For now, use flat page table like 32-bit mode as fallback */
+  if (pgn >= PAGING_MAX_PGN) {
+    return -1;
+  }
+  pte = (addr_t*)&krnl->mm->pgd[pgn];
 #else
   pte = (addr_t*)&krnl->mm->pgd[pgn];
 #endif
-	if(pte != NULL){
+
+  if(pte != NULL){
     CLRBIT(*pte, PAGING_PTE_PRESENT_MASK);
-    //SETBIT(*pte, PAGING_PTE_PRESENT_MASK);
     SETBIT(*pte, PAGING_PTE_SWAPPED_MASK);
     CLRBIT(*pte, PAGING_PTE_DIRTY_MASK);
 
     SETVAL(*pte, swptyp, PAGING_PTE_SWPTYP_MASK, PAGING_PTE_SWPTYP_LOBIT);
     SETVAL(*pte, swpoff, PAGING_PTE_SWPOFF_MASK, PAGING_PTE_SWPOFF_LOBIT);
   }
-  // SETBIT(*pte, PAGING_PTE_PRESENT_MASK);
-  // SETBIT(*pte, PAGING_PTE_SWAPPED_MASK);
-
-  // SETVAL(*pte, swptyp, PAGING_PTE_SWPTYP_MASK, PAGING_PTE_SWPTYP_LOBIT);
-  // SETVAL(*pte, swpoff, PAGING_PTE_SWPOFF_MASK, PAGING_PTE_SWPOFF_LOBIT);
 
   return 0;
 }
@@ -156,41 +144,29 @@ int pte_set_swap(struct pcb_t *caller, addr_t pgn, int swptyp, addr_t swpoff)
  */
 int pte_set_fpn(struct pcb_t *caller, addr_t pgn, addr_t fpn)
 {
+  if (caller == NULL || caller->krnl == NULL || caller->krnl->mm == NULL) {
+    return -1;
+  }
+  
   struct krnl_t *krnl = caller->krnl;
-
-  // addr_t *pte;
-  // addr_t pgd=0;
-  // addr_t p4d=0;
-  // addr_t pud=0;
-  // addr_t pmd=0;
-  // addr_t pt=0;
   addr_t *pte = NULL;
 	
-  // dummy pte alloc to avoid runtime error
-  //pte = malloc(sizeof(addr_t));
 #ifdef MM64	
-  /* Get value from the system */
-  /* TODO Perform multi-level page mapping */
-  addr_t pgd_idx, p4d_idx, pud_idx, pmd_idx, pt_idx;
-  get_pd_from_pagenum(pgn, &pgd_idx, &p4d_idx, &pud_idx, &pmd_idx, &pt_idx);
-  //get_pd_from_pagenum(pgn, &pgd, &p4d, &pud, &pmd, &pt);
-  //... krnl->mm->pgd
-  //... krnl->mm->pt
-  //pte = &krnl->mm->pt;
-  return -1;
+  /* TODO: Full multi-level page table implementation needed
+   * For now, use flat page table like 32-bit mode as fallback */
+  if (pgn >= PAGING_MAX_PGN) {
+    return -1;
+  }
+  pte = (addr_t*)&krnl->mm->pgd[pgn];
 #else
   pte = (addr_t*)&krnl->mm->pgd[pgn];
 #endif
+
   if(pte != NULL){
     SETBIT(*pte, PAGING_PTE_PRESENT_MASK);
     CLRBIT(*pte, PAGING_PTE_SWAPPED_MASK);
-
     SETVAL(*pte, fpn, PAGING_PTE_FPN_MASK, PAGING_PTE_FPN_LOBIT);
   }
-  // SETBIT(*pte, PAGING_PTE_PRESENT_MASK);
-  // CLRBIT(*pte, PAGING_PTE_SWAPPED_MASK);
-
-  // SETVAL(*pte, fpn, PAGING_PTE_FPN_MASK, PAGING_PTE_FPN_LOBIT);
 
   return 0;
 }
@@ -203,25 +179,21 @@ int pte_set_fpn(struct pcb_t *caller, addr_t pgn, addr_t fpn)
  **/
 uint32_t pte_get_entry(struct pcb_t *caller, addr_t pgn)
 {
+  if (caller == NULL || caller->krnl == NULL || caller->krnl->mm == NULL) {
+    return 0;
+  }
+  
   struct krnl_t *krnl = caller->krnl;
-  // uint32_t pte = 0;
-  // addr_t pgd=0;
-  // addr_t p4d=0;
-  // addr_t pud=0;
-  // addr_t pmd=0;
-  // addr_t	pt=0;
   uint32_t pte = 0;
+  
 #ifdef MM64
-  addr_t pgd_idx, p4d_idx, pud_idx, pmd_idx, pt_idx;
-  get_pd_from_pagenum(pgn, &pgd_idx, &p4d_idx, &pud_idx, &pmd_idx, &pt_idx);
-	
-  /* TODO Perform multi-level page mapping */
-  //get_pd_from_pagenum(pgn, &pgd, &p4d, &pud, &pmd, &pt);
-  //... krnl->mm->pgd
-  //... krnl->mm->pt
-  //pte = &krnl->mm->pt;	
+  /* TODO: Full multi-level page table implementation needed
+   * For now, use flat page table like 32-bit mode as fallback */
+  if (pgn < PAGING_MAX_PGN) {
+    pte = krnl->mm->pgd[pgn];
+  }
 #else
-  if(pgn < PAGING_MAX_PGN){
+  if (pgn < PAGING_MAX_PGN) {
     pte = krnl->mm->pgd[pgn];
   }
 #endif
@@ -236,19 +208,24 @@ uint32_t pte_get_entry(struct pcb_t *caller, addr_t pgn)
  **/
 int pte_set_entry(struct pcb_t *caller, addr_t pgn, uint32_t pte_val)
 {
-	struct krnl_t *krnl = caller->krnl;
+  if (caller == NULL || caller->krnl == NULL || caller->krnl->mm == NULL) {
+    return -1;
+  }
+  
+  struct krnl_t *krnl = caller->krnl;
+  
 #ifdef MM64
-  addr_t pgd_idx, p4d_idx, pud_idx, pmd_idx, pt_idx;
-  addr_t *pte_addr;
-  get_pd_from_pagenum(pgn, &pgd_idx, &p4d_idx, &pud_idx, &pmd_idx, &pt_idx);
-
-  return -1;
-
+  /* TODO: Full multi-level page table implementation needed
+   * For now, use flat page table like 32-bit mode as fallback */
+  if (pgn >= PAGING_MAX_PGN) {
+    return -1;
+  }
+  krnl->mm->pgd[pgn] = pte_val;
 #else
-	krnl->mm->pgd[pgn]=pte_val;
+  krnl->mm->pgd[pgn] = pte_val;
 #endif
 
-	return 0;
+  return 0;
 }
 
 
@@ -264,9 +241,6 @@ int vmap_pgd_memset(struct pcb_t *caller,           // process call
 
   /* TODO memset the page table with given pattern
    */
-  struct krnl_t *krnl = caller->krnl;
-  addr_t pgn_start = PAGING_PGN(addr);
-  int i;
 
 #ifdef MM64
   return 0;
@@ -362,18 +336,33 @@ addr_t alloc_pages_range(struct pcb_t *caller, int req_pgnum, struct framephy_st
   }
 */
   for(pgit = 0; pgit < req_pgnum; pgit++){
-    if(MEMPHY_get_freefp(caller->krnl->mram, &fpn) == 0){
-      newfp_str = (struct framephy_struct*) malloc(sizeof(struct framephy_struct));
-      newfp_str->fpn = fpn;
-
-      newfp_str->fp_next = *frm_lst;
-      *frm_lst = newfp_str;
-
-      count++;
-    }
-    else{
+    if(MEMPHY_get_freefp(caller->krnl->mram, &fpn) != 0){
+      /* Failed to get free frame - cleanup allocated frames */
+      while (*frm_lst != NULL) {
+        struct framephy_struct *tmp = *frm_lst;
+        *frm_lst = tmp->fp_next;
+        MEMPHY_put_freefp(caller->krnl->mram, tmp->fpn);
+        free(tmp);
+      }
       return -3000;
     }
+
+    newfp_str = (struct framephy_struct*) malloc(sizeof(struct framephy_struct));
+    if (newfp_str == NULL) {
+      /* Malloc failed - cleanup allocated frames */
+      while (*frm_lst != NULL) {
+        struct framephy_struct *tmp = *frm_lst;
+        *frm_lst = tmp->fp_next;
+        MEMPHY_put_freefp(caller->krnl->mram, tmp->fpn);
+        free(tmp);
+      }
+      return -3000;
+    }
+
+    newfp_str->fpn = fpn;
+    newfp_str->fp_next = *frm_lst;
+    *frm_lst = newfp_str;
+    count++;
   }
 
   /* End TODO */
@@ -511,6 +500,10 @@ int init_mm(struct mm_struct *mm, struct pcb_t *caller)
 struct vm_rg_struct *init_vm_rg(addr_t rg_start, addr_t rg_end)
 {
   struct vm_rg_struct *rgnode = malloc(sizeof(struct vm_rg_struct));
+  
+  if (rgnode == NULL) {
+    return NULL;
+  }
 
   rgnode->rg_start = rg_start;
   rgnode->rg_end = rg_end;
@@ -529,7 +522,19 @@ int enlist_vm_rg_node(struct vm_rg_struct **rglist, struct vm_rg_struct *rgnode)
 
 int enlist_pgn_node(struct pgn_t **plist, addr_t pgn)
 {
+  /* Check for duplicates to prevent double-free */
+  struct pgn_t *curr = *plist;
+  while (curr != NULL) {
+    if (curr->pgn == pgn) {
+      return 0;  /* Already in list, don't add */
+    }
+    curr = curr->pg_next;
+  }
+
   struct pgn_t *pnode = malloc(sizeof(struct pgn_t));
+  if (pnode == NULL) {
+    return -1;
+  }
 
   pnode->pgn = pgn;
   pnode->pg_next = *plist;
@@ -621,7 +626,6 @@ int print_list_pgn(struct pgn_t *ip)
 
 int print_pgtbl(struct pcb_t *caller, addr_t start, addr_t end)
 {
-    struct krnl_t *krnl = caller->krnl;
     addr_t pgn_start;
     addr_t pgn_end;
     addr_t pgit;
@@ -650,7 +654,8 @@ int print_pgtbl(struct pcb_t *caller, addr_t start, addr_t end)
     // 2. Duyệt qua các trang ảo trong dải [pgn_start, pgn_end)
     for (pgit = pgn_start; pgit < pgn_end; pgit++)
     {
-        uint32_t pte = krnl->mm->pgd[pgit];
+        // uint32_t pte = krnl->mm->pgd[pgit];
+        uint32_t pte = caller->mm->pgd[pgit];
         
         // Chỉ in các PTEs không rỗng (PTE != 0)
         if (pte != 0) 
@@ -693,3 +698,5 @@ int print_pgtbl(struct pcb_t *caller, addr_t start, addr_t end)
 }
 
 #endif  //def MM64
+
+
