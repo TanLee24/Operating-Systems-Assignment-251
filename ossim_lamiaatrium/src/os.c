@@ -166,7 +166,9 @@ static void read_config(const char * path) {
 	for(sit = 0; sit < PAGING_MAX_MMSWP; sit++)
 		fscanf(file, "%d", &(memswpsz[sit])); 
 
-       fscanf(file, "\n"); /* Final character */
+	char c;
+	while ((c = fgetc(file)) != EOF && c != '\n') {}
+
 #endif
 #endif
 
@@ -179,12 +181,17 @@ static void read_config(const char * path) {
 		ld_processes.path[i] = (char*)malloc(sizeof(char) * 100);
 		ld_processes.path[i][0] = '\0';
 		strcat(ld_processes.path[i], "input/proc/");
-		char proc[100];
+		char proc[100] = "";
 #ifdef MLQ_SCHED
 		fscanf(file, "%lu %s %lu\n", &ld_processes.start_time[i], proc, &ld_processes.prio[i]);
 #else
 		fscanf(file, "%lu %s\n", &ld_processes.start_time[i], proc);
 #endif
+	int len = strlen(proc);
+	while (len > 0 && (proc[len - 1] == '\r' || proc[len - 1] == '\n')) {
+		proc[len - 1] = '\0';
+		len--;
+	}
 		strcat(ld_processes.path[i], proc);
 	}
 }

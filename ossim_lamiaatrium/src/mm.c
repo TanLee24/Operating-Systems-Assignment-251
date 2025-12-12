@@ -276,32 +276,58 @@ int enlist_pgn_node(struct pgn_t **plist, addr_t pgn)
   return 0;
 }
 
-int print_pgtbl(struct pcb_t *caller, uint32_t start, uint32_t end)
-{
-  int pgn_start, pgn_end;
-  int pgit;
+// int print_pgtbl(struct pcb_t *caller, uint32_t start, uint32_t end)
+// {
+//   int pgn_start, pgn_end;
+//   int pgit;
 
-  if(caller == NULL || caller->mm == NULL) return -1;
+//   if(caller == NULL || caller->mm == NULL) return -1;
   
-  pgn_start = PAGING_PGN(start);
-  pgn_end = PAGING_PGN(end);
+//   pgn_start = PAGING_PGN(start);
+//   pgn_end = PAGING_PGN(end);
   
-  if (end == (uint32_t)-1) pgn_end = PAGING_MAX_PGN;
+//   if (end == (uint32_t)-1) pgn_end = PAGING_MAX_PGN;
 
-  printf("print_pgtbl: \n");
+//   printf("print_pgtbl: \n");
 
-  for(pgit = pgn_start; pgit < pgn_end; pgit++)
-  {
-    uint32_t pte = caller->mm->pgd[pgit];
+//   for(pgit = pgn_start; pgit < pgn_end; pgit++)
+//   {
+//     uint32_t pte = caller->mm->pgd[pgit];
     
-    if ((pte & PAGING_PTE_PRESENT_MASK)) 
-    {
-        printf("\t%08ld: %08x\n", pgit * sizeof(uint32_t), pte);
-    }
-  }
+//     if ((pte & PAGING_PTE_PRESENT_MASK)) 
+//     {
+//         printf("\t%08ld: %08x\n", pgit * sizeof(uint32_t), pte);
+//     }
+//   }
 
-  return 0;
-}
+//   return 0;
+// }
+
+int print_pgtbl(struct pcb_t *caller, uint32_t start, uint32_t end)
+ {
+   int pgn_start, pgn_end;
+   int pgit;
+ 
+   if (end == -1)
+   {
+     pgn_start = 0;
+     struct vm_area_struct *cur_vma = get_vma_by_num(caller->mm, 0);
+     end = cur_vma->vm_end;
+   }
+   pgn_start = PAGING_PGN(start);
+   pgn_end = PAGING_PGN(end);
+ 
+   printf("print_pgtbl: %d - %d", start, end);
+   if (caller == NULL) { printf("NULL caller\n"); return -1;}
+   printf("\n");
+ 
+   for (pgit = pgn_start; pgit < pgn_end; pgit++)
+   {
+     printf("%08ld: %08x\n", pgit * sizeof(uint32_t), caller->mm->pgd[pgit]);
+   }
+ 
+   return 0;
+ }
 
 /* Các hàm Deprecated / Stub */
 int vmap_pgd_memset(struct pcb_t *caller, addr_t addr, int pgnum) { return 0; }
