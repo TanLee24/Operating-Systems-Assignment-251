@@ -5,26 +5,27 @@ Time slot   1
 	CPU 1: Dispatched process  1
 Time slot   2
 	Loaded a process at input/proc/p1s, PID: 2 PRIO: 15
---- PCB 1 Page Table (PGN 0 to 16384) ---
+liballoc:0
+--- PCB 1 Page Table ---
 ----------------------------------------
 	CPU 0: Dispatched process  2
+liballoc:300
+--- PCB 1 Page Table ---
+----------------------------------------
 Time slot   3
---- PCB 1 Page Table (PGN 0 to 16384) ---
-----------------------------------------
-Time slot   4
 	Loaded a process at input/proc/p1s, PID: 3 PRIO: 0
---- PCB 1 Page Table (PGN 0 to 16384) ---
-----------------------------------------
+Time slot   4
+libfree:-1
 Time slot   5
---- PCB 1 Page Table (PGN 0 to 16384) ---
+liballoc:0
+--- PCB 1 Page Table ---
 ----------------------------------------
-Time slot   6
 	Loaded a process at input/proc/p1s, PID: 4 PRIO: 0
---- PCB 1 Page Table (PGN 0 to 16384) ---
-----------------------------------------
+Time slot   6
+libwrite:20
 	CPU 1: Put process  1 to run queue
-	CPU 1: Dispatched process  3
 Time slot   7
+	CPU 1: Dispatched process  3
 Time slot   8
 	CPU 0: Put process  2 to run queue
 	CPU 0: Dispatched process  4
@@ -33,32 +34,36 @@ Time slot  10
 Time slot  11
 Time slot  12
 	CPU 1: Put process  3 to run queue
-Time slot  13
 	CPU 1: Dispatched process  1
---- PCB 1 Page Table (PGN 0 to 16384) ---
+Time slot  13
+libread:20
+--- PCB 1 Page Table ---
 ----------------------------------------
+libwrite:20
 Time slot  14
 	CPU 0: Put process  4 to run queue
 	CPU 0: Dispatched process  3
---- PCB 1 Page Table (PGN 0 to 16384) ---
+libread:20
+--- PCB 1 Page Table ---
+----------------------------------------
 Time slot  15
-----------------------------------------
+libwrite:20
 Time slot  16
---- PCB 1 Page Table (PGN 0 to 16384) ---
-Time slot  17
+libread:20
+--- PCB 1 Page Table ---
 ----------------------------------------
+Time slot  17
 Time slot  18
 	CPU 0: Processed  3 has finished
 	CPU 0: Dispatched process  4
 	CPU 1: Put process  1 to run queue
 	CPU 1: Dispatched process  1
---- PCB 1 Page Table (PGN 0 to 16384) ---
+libfree:-1
 Time slot  19
-----------------------------------------
 Time slot  20
 	CPU 1: Processed  1 has finished
-	CPU 1: Dispatched process  2
 Time slot  21
+	CPU 1: Dispatched process  2
 Time slot  22
 	CPU 0: Processed  4 has finished
 	CPU 0 stopped
