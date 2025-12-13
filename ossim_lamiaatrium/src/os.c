@@ -3,6 +3,7 @@
 #include "sched.h"
 #include "loader.h"
 #include "mm.h"
+#include "queue.h"
 
 #include <pthread.h>
 #include <stdio.h>
@@ -66,6 +67,7 @@ static void * cpu_routine(void * args) {
 			/* The porcess has finish it job */
 			printf("\tCPU %d: Processed %2d has finished\n",
 				id ,proc->pid);
+				purgequeue(proc->krnl->running_list, proc);
 			free(proc);
 			proc = get_proc();
 			time_left = 0;
