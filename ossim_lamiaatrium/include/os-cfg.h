@@ -28,6 +28,6 @@
  *      
  */
 #define MM64 1
-// #undef MM64
+// #undef MM64 // Comment this to run 64-bit configuration
 
 #endif

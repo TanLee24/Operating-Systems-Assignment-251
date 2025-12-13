@@ -8,8 +8,8 @@ Time slot   2
 Time slot   3
 	CPU 0: Put process  1 to run queue
 	CPU 0: Dispatched process  1
-	Loaded a process at input/proc/m1s, PID: 3 PRIO: 2
 Time slot   4
+	Loaded a process at input/proc/m1s, PID: 3 PRIO: 2
 Time slot   5
 	CPU 0: Put process  1 to run queue
 	CPU 0: Dispatched process  1
@@ -22,32 +22,38 @@ Time slot   7
 Time slot   8
 	CPU 0: Processed  1 has finished
 	CPU 0: Dispatched process  3
+liballoc:0
 --- PCB 3 Page Table ---
 ----------------------------------------
 	Loaded a process at input/proc/p1s, PID: 6 PRIO: 2
 Time slot   9
+liballoc:0
 --- PCB 3 Page Table ---
 ----------------------------------------
 Time slot  10
 	CPU 0: Put process  3 to run queue
 	CPU 0: Dispatched process  6
-	Loaded a process at input/proc/s0, PID: 7 PRIO: 1
 Time slot  11
+	Loaded a process at input/proc/s0, PID: 7 PRIO: 1
 Time slot  12
 	CPU 0: Put process  6 to run queue
 	CPU 0: Dispatched process  3
+libfree:-1
 Time slot  13
+liballoc:0
 --- PCB 3 Page Table ---
 ----------------------------------------
 Time slot  14
 	CPU 0: Put process  3 to run queue
 	CPU 0: Dispatched process  6
 Time slot  15
-	Loaded a process at input/proc/s1, PID: 8 PRIO: 0
 Time slot  16
+	Loaded a process at input/proc/s1, PID: 8 PRIO: 0
 	CPU 0: Put process  6 to run queue
 	CPU 0: Dispatched process  3
+libfree:-1
 Time slot  17
+libfree:-1
 Time slot  18
 	CPU 0: Processed  3 has finished
 	CPU 0: Dispatched process  6
@@ -71,9 +77,11 @@ Time slot  27
 Time slot  28
 	CPU 0: Put process  4 to run queue
 	CPU 0: Dispatched process  5
+liballoc:0
 --- PCB 5 Page Table ---
 ----------------------------------------
 Time slot  29
+liballoc:0
 --- PCB 5 Page Table ---
 ----------------------------------------
 Time slot  30
@@ -87,7 +95,11 @@ Time slot  33
 Time slot  34
 	CPU 0: Put process  4 to run queue
 	CPU 0: Dispatched process  5
+libfree:0
+--- PCB 5 Page Table ---
+----------------------------------------
 Time slot  35
+liballoc:0
 --- PCB 5 Page Table ---
 ----------------------------------------
 Time slot  36
@@ -101,7 +113,11 @@ Time slot  39
 Time slot  40
 	CPU 0: Put process  4 to run queue
 	CPU 0: Dispatched process  5
+libwrite:0
+--- PCB 5 Page Table ---
+----------------------------------------
 Time slot  41
+libwrite:-1
 Time slot  42
 	CPU 0: Processed  5 has finished
 	CPU 0: Dispatched process  2

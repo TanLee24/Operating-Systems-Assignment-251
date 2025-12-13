@@ -93,7 +93,7 @@ int get_pd_from_pagenum(addr_t pgn, addr_t* pgd, addr_t* p4d, addr_t* pud, addr_
  */
 int pte_set_swap(struct pcb_t *caller, addr_t pgn, int swptyp, addr_t swpoff)
 {
-  addr_t *pte = &caller->mm->pgd[pgn];
+  addr_t *pte = &caller->krnl->mm->pgd[pgn];
   SETBIT(*pte, PAGING_PTE_PRESENT_MASK);
   SETBIT(*pte, PAGING_PTE_SWAPPED_MASK);
   SETVAL(*pte, swptyp, PAGING_PTE_SWPTYP_MASK, PAGING_PTE_SWPTYP_LOBIT);
@@ -106,7 +106,7 @@ int pte_set_swap(struct pcb_t *caller, addr_t pgn, int swptyp, addr_t swpoff)
  */
 int pte_set_fpn(struct pcb_t *caller, addr_t pgn, addr_t fpn)
 {
-  addr_t *pte = &caller->mm->pgd[pgn];
+  addr_t *pte = &caller->krnl->mm->pgd[pgn];
   SETBIT(*pte, PAGING_PTE_PRESENT_MASK);
   CLRBIT(*pte, PAGING_PTE_SWAPPED_MASK);
   SETVAL(*pte, fpn, PAGING_PTE_FPN_MASK, PAGING_PTE_FPN_LOBIT);
@@ -116,15 +116,15 @@ int pte_set_fpn(struct pcb_t *caller, addr_t pgn, addr_t fpn)
 /* Get PTE page table entry */
 uint32_t pte_get_entry(struct pcb_t *caller, addr_t pgn)
 {
-  if(caller == NULL || caller->mm == NULL || caller->mm->pgd == NULL)
+  if(caller == NULL || caller->krnl->mm == NULL || caller->krnl->mm->pgd == NULL)
       return 0; 
-  return caller->mm->pgd[pgn];
+  return caller->krnl->mm->pgd[pgn];
 }
 
 /* Set PTE page table entry */
 int pte_set_entry(struct pcb_t *caller, addr_t pgn, uint32_t pte_val)
 {
-	caller->mm->pgd[pgn] = pte_val;
+	caller->krnl->mm->pgd[pgn] = pte_val;
 	return 0;
 }
 
@@ -151,7 +151,7 @@ addr_t vmap_page_range(struct pcb_t *caller,           // process call
       
       pte_set_fpn(caller, pgn + pgit, fpit->fpn); 
       
-      enlist_pgn_node(&caller->mm->fifo_pgn, pgn + pgit); 
+      enlist_pgn_node(&caller->krnl->mm->fifo_pgn, pgn + pgit); 
 
       fpit = fpit->fp_next;
   }
@@ -311,7 +311,7 @@ int print_pgtbl(struct pcb_t *caller, uint32_t start, uint32_t end)
    if (end == -1)
    {
      pgn_start = 0;
-     struct vm_area_struct *cur_vma = get_vma_by_num(caller->mm, 0);
+     struct vm_area_struct *cur_vma = get_vma_by_num(caller->krnl->mm, 0);
      end = cur_vma->vm_end;
    }
    pgn_start = PAGING_PGN(start);
@@ -323,7 +323,7 @@ int print_pgtbl(struct pcb_t *caller, uint32_t start, uint32_t end)
  
    for (pgit = pgn_start; pgit < pgn_end; pgit++)
    {
-     printf("%08ld: %08x\n", pgit * sizeof(uint32_t), caller->mm->pgd[pgit]);
+     printf("%08ld: %08x\n", pgit * sizeof(uint32_t), caller->krnl->mm->pgd[pgit]);
    }
  
    return 0;

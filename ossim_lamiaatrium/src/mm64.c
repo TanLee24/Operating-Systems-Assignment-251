@@ -107,10 +107,10 @@ int init_pte(addr_t *pte,
 
 int pte_set_swap(struct pcb_t *caller, addr_t pgn, int swptyp, addr_t swpoff)
 {
-    if (!caller || !caller->mm) return -1;
+    if (!caller || !caller->krnl->mm) return -1;
     
     /* Get PTE, allocating path if necessary to store swap info */
-    addr_t *pte = __get_pte(caller->mm, pgn, 1); 
+    addr_t *pte = __get_pte(caller->krnl->mm, pgn, 1); 
     if (!pte) return -1;
 
     CLRBIT(*pte, PAGING_PTE_PRESENT_MASK);
@@ -125,10 +125,10 @@ int pte_set_swap(struct pcb_t *caller, addr_t pgn, int swptyp, addr_t swpoff)
 
 int pte_set_fpn(struct pcb_t *caller, addr_t pgn, addr_t fpn)
 {
-    if (!caller || !caller->mm) return -1;
+    if (!caller || !caller->krnl->mm) return -1;
 
     /* Get PTE, allocating path if necessary */
-    addr_t *pte = __get_pte(caller->mm, pgn, 1);
+    addr_t *pte = __get_pte(caller->krnl->mm, pgn, 1);
     if (!pte) return -1;
 
     SETBIT(*pte, PAGING_PTE_PRESENT_MASK);
@@ -140,10 +140,10 @@ int pte_set_fpn(struct pcb_t *caller, addr_t pgn, addr_t fpn)
 
 uint32_t pte_get_entry(struct pcb_t *caller, addr_t pgn)
 {
-    if (!caller || !caller->mm) return 0;
+    if (!caller || !caller->krnl->mm) return 0;
 
     /* Don't alloc if just reading */
-    addr_t *pte = __get_pte(caller->mm, pgn, 0); 
+    addr_t *pte = __get_pte(caller->krnl->mm, pgn, 0); 
     if (!pte) return 0; /* Page not mapped yet */
 
     return (uint32_t)*pte;
@@ -151,9 +151,9 @@ uint32_t pte_get_entry(struct pcb_t *caller, addr_t pgn)
 
 int pte_set_entry(struct pcb_t *caller, addr_t pgn, uint32_t pte_val)
 {
-    if (!caller || !caller->mm) return -1;
+    if (!caller || !caller->krnl->mm) return -1;
 
-    addr_t *pte = __get_pte(caller->mm, pgn, 1);
+    addr_t *pte = __get_pte(caller->krnl->mm, pgn, 1);
     if (!pte) return -1;
 
     *pte = pte_val;
@@ -184,7 +184,7 @@ addr_t vmap_page_range(struct pcb_t *caller,
        if (fpit == NULL) break;
        
        pte_set_fpn(caller, pgn + pgit, fpit->fpn);
-       enlist_pgn_node(&caller->mm->fifo_pgn, pgn + pgit);
+       enlist_pgn_node(&caller->krnl->mm->fifo_pgn, pgn + pgit);
        
        fpit = fpit->fp_next;
     }
@@ -362,9 +362,9 @@ static void print_pgtbl_recursive(void *table, int level, addr_t current_pgn) {
 int print_pgtbl(struct pcb_t *caller, addr_t start, addr_t end)
 {
     printf("--- PCB %d Page Table ---\n", caller->pid);
-    if (caller && caller->mm && caller->mm->pgd) {
+    if (caller && caller->krnl->mm && caller->krnl->mm->pgd) {
         /* Start traversal from Level 5 (PGD) */
-        print_pgtbl_recursive((void *)caller->mm->pgd, 5, 0);
+        print_pgtbl_recursive((void *)caller->krnl->mm->pgd, 5, 0);
     }
     printf("----------------------------------------\n");
     return 0;
@@ -380,7 +380,7 @@ int vmap_pgd_memset(struct pcb_t *caller, addr_t addr, int pgnum)
     for(i = 0; i < pgnum; i++) {
         addr_t pgn = PAGING_PGN(addr) + i;
         /* Force allocation of intermediate tables, but result PTE is left 0 */
-        __get_pte(caller->mm, pgn, 1); 
+        __get_pte(caller->krnl->mm, pgn, 1); 
     }
     return 0;
 }
