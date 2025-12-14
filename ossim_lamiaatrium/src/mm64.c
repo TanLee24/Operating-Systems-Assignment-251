@@ -25,6 +25,16 @@
  * If intermediate tables are missing and 'alloc' is true, they are created.
  */
 /* [FIX] Changed pgn type from int to addr_t to prevent overflow when shifting */
+static unsigned long total_pgtbl_size = 0;
+static unsigned long memory_access_count = 0;
+void print_paging_stats() {
+    printf("\n============================================================\n");
+    printf("           MULTILEVEL PAGING STATISTICS (MM64)\n");
+    printf("============================================================\n");
+    printf("  [+] Page Table Storage Size : %lu bytes\n", total_pgtbl_size);
+    printf("  [+] Memory Access Count     : %lu times\n", memory_access_count);
+    printf("============================================================\n\n");
+}
 static addr_t *__get_pte(struct mm_struct *mm, addr_t pgn, int alloc) {
     if (!mm || !mm->pgd) return NULL;
 
@@ -32,6 +42,7 @@ static addr_t *__get_pte(struct mm_struct *mm, addr_t pgn, int alloc) {
     /* PGN includes indices for PGD, P4D, PUD, PMD, PT */
     /* Shift amounts assume 9 bits per level (512 entries) */
     /* Total 9*5 = 45 bits for PGN, + 12 bits offset = 57 bits address */
+    memory_access_count += 5;
     int pgd_idx = (pgn >> 36) & 0x1FF;
     int p4d_idx = (pgn >> 27) & 0x1FF;
     int pud_idx = (pgn >> 18) & 0x1FF;
@@ -43,6 +54,7 @@ static addr_t *__get_pte(struct mm_struct *mm, addr_t pgn, int alloc) {
         if (!alloc) return NULL;
         mm->pgd[pgd_idx] = (addr_t)malloc(512 * sizeof(addr_t));
         memset((void *)mm->pgd[pgd_idx], 0, 512 * sizeof(addr_t));
+        total_pgtbl_size += 512 * sizeof(addr_t);
     }
     addr_t *p4d = (addr_t *)mm->pgd[pgd_idx];
 
@@ -51,6 +63,7 @@ static addr_t *__get_pte(struct mm_struct *mm, addr_t pgn, int alloc) {
         if (!alloc) return NULL;
         p4d[p4d_idx] = (addr_t)malloc(512 * sizeof(addr_t));
         memset((void *)p4d[p4d_idx], 0, 512 * sizeof(addr_t));
+        total_pgtbl_size += 512 * sizeof(addr_t);
     }
     addr_t *pud = (addr_t *)p4d[p4d_idx];
 
@@ -59,6 +72,7 @@ static addr_t *__get_pte(struct mm_struct *mm, addr_t pgn, int alloc) {
         if (!alloc) return NULL;
         pud[pud_idx] = (addr_t)malloc(512 * sizeof(addr_t));
         memset((void *)pud[pud_idx], 0, 512 * sizeof(addr_t));
+        total_pgtbl_size += 512 * sizeof(addr_t);
     }
     addr_t *pmd = (addr_t *)pud[pud_idx];
 
@@ -67,10 +81,12 @@ static addr_t *__get_pte(struct mm_struct *mm, addr_t pgn, int alloc) {
         if (!alloc) return NULL;
         pmd[pmd_idx] = (addr_t)malloc(512 * sizeof(addr_t));
         memset((void *)pmd[pmd_idx], 0, 512 * sizeof(addr_t));
+        total_pgtbl_size += 512 * sizeof(addr_t);
     }
     addr_t *pt = (addr_t *)pmd[pmd_idx];
 
     /* Level 1: PT - Return pointer to the PTE entry */
+    // total_pgtbl_size += 512 * sizeof(addr_t);
     return &pt[pt_idx];
 }
 
@@ -263,33 +279,35 @@ int init_mm(struct mm_struct *mm, struct pcb_t *caller)
     struct vm_area_struct * vma = malloc(sizeof(struct vm_area_struct));
 
     /* Initialize PGD as a top-level directory (one table of 512 entries) */
-    mm->pgd = (addr_t*)malloc(512 * sizeof(addr_t));
-    memset(mm->pgd, 0, 512 * sizeof(addr_t));
+    caller->krnl->mm->pgd = (addr_t*)malloc(512 * sizeof(addr_t));
+    memset(caller->krnl->mm->pgd, 0, 512 * sizeof(addr_t));
 
     /* Other levels are managed dynamically in __get_pte */
-    mm->p4d = NULL; 
-    mm->pud = NULL; 
-    mm->pmd = NULL; 
-    mm->pt = NULL;
+    caller->krnl->mm->p4d = NULL; 
+    caller->krnl->mm->pud = NULL; 
+    caller->krnl->mm->pmd = NULL; 
+    caller->krnl->mm->pt = NULL;
 
     vma->vm_id = 0;
     vma->vm_start = 0;
-    // [FIX] Use BIT_ULL to prevent 32-bit overflow for 57-bit address space
     vma->vm_end = BIT_ULL(PAGING_CPU_BUS_WIDTH); 
-    vma->sbrk = vma->vm_start;
+    // vma->sbrk = vma->vm_start;
+    vma->sbrk = vma->vm_start + PAGING64_PAGESZ;
     
-    struct vm_rg_struct *first_rg = init_vm_rg(vma->vm_start, vma->vm_end);
-    enlist_vm_rg_node(&vma->vm_freerg_list, first_rg);
+    /* --- SỬA ĐỔI TẠI ĐÂY --- */
+    /* Ban đầu chưa có vùng nhớ nào được map, nên free list phải rỗng */
+    vma->vm_freerg_list = NULL;
+    /* ----------------------- */
 
     vma->vm_next = NULL;
     vma->vm_mm = mm;
-    mm->mmap = vma;
+    caller->krnl->mm->mmap = vma;
     
     /* Initialize symbol table */
     for (int i=0; i<PAGING_MAX_SYMTBL_SZ; i++) {
-        mm->symrgtbl[i].rg_start = 0;
-        mm->symrgtbl[i].rg_end = 0;
-        mm->symrgtbl[i].rg_next = NULL;
+        caller->krnl->mm->symrgtbl[i].rg_start = 0;
+        caller->krnl->mm->symrgtbl[i].rg_end = 0;
+        caller->krnl->mm->symrgtbl[i].rg_next = NULL;
     }
 
     return 0;

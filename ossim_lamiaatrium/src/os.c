@@ -16,6 +16,7 @@ static int done = 0;
 static struct krnl_t os;
 
 pthread_mutex_t mem_lock;
+extern void print_paging_stats();
 
 #ifdef MM_PAGING
 static int memramsz;
@@ -273,6 +274,7 @@ int main(int argc, char * argv[]) {
 
 	/* Stop timer */
 	stop_timer();
+	print_paging_stats();
 
 	return 0;
 
