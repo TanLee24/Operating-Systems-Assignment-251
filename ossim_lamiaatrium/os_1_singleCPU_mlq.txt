@@ -13,8 +13,8 @@ Time slot   4
 Time slot   5
 	CPU 0: Put process  1 to run queue
 	CPU 0: Dispatched process  1
-	Loaded a process at input/proc/s2, PID: 4 PRIO: 3
 Time slot   6
+	Loaded a process at input/proc/s2, PID: 4 PRIO: 3
 Time slot   7
 	CPU 0: Put process  1 to run queue
 	CPU 0: Dispatched process  1
@@ -22,37 +22,60 @@ Time slot   7
 Time slot   8
 	CPU 0: Processed  1 has finished
 	CPU 0: Dispatched process  3
+liballoc:0
 --- PCB 3 Page Table ---
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
 ----------------------------------------
 Time slot   9
---- PCB 3 Page Table ---
-----------------------------------------
 	Loaded a process at input/proc/p1s, PID: 6 PRIO: 2
+liballoc:512
+--- PCB 3 Page Table ---
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00002)
+----------------------------------------
 Time slot  10
 	CPU 0: Put process  3 to run queue
 	CPU 0: Dispatched process  6
-	Loaded a process at input/proc/s0, PID: 7 PRIO: 1
 Time slot  11
+	Loaded a process at input/proc/s0, PID: 7 PRIO: 1
 Time slot  12
 	CPU 0: Put process  6 to run queue
 	CPU 0: Dispatched process  3
+libfree:0
 --- PCB 3 Page Table ---
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00002)
 ----------------------------------------
 Time slot  13
+liballoc:0
 --- PCB 3 Page Table ---
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00002)
 ----------------------------------------
 Time slot  14
 	CPU 0: Put process  3 to run queue
 	CPU 0: Dispatched process  6
 Time slot  15
 Time slot  16
-	Loaded a process at input/proc/s1, PID: 8 PRIO: 0
 	CPU 0: Put process  6 to run queue
 	CPU 0: Dispatched process  3
+libfree:0
 --- PCB 3 Page Table ---
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00002)
 ----------------------------------------
+	Loaded a process at input/proc/s1, PID: 8 PRIO: 0
 Time slot  17
+libfree:512
 --- PCB 3 Page Table ---
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00002)
 ----------------------------------------
 Time slot  18
 	CPU 0: Processed  3 has finished
@@ -77,10 +100,17 @@ Time slot  27
 Time slot  28
 	CPU 0: Put process  4 to run queue
 	CPU 0: Dispatched process  5
+liballoc:0
 --- PCB 5 Page Table ---
+  PGN [00000]: PRESENT (FPN 00004)
+  PGN [00001]: PRESENT (FPN 00003)
 ----------------------------------------
 Time slot  29
+liballoc:512
 --- PCB 5 Page Table ---
+  PGN [00000]: PRESENT (FPN 00004)
+  PGN [00001]: PRESENT (FPN 00003)
+  PGN [00002]: PRESENT (FPN 00005)
 ----------------------------------------
 Time slot  30
 	CPU 0: Put process  5 to run queue
@@ -93,10 +123,18 @@ Time slot  33
 Time slot  34
 	CPU 0: Put process  4 to run queue
 	CPU 0: Dispatched process  5
+libfree:0
 --- PCB 5 Page Table ---
+  PGN [00000]: PRESENT (FPN 00004)
+  PGN [00001]: PRESENT (FPN 00003)
+  PGN [00002]: PRESENT (FPN 00005)
 ----------------------------------------
 Time slot  35
+liballoc:0
 --- PCB 5 Page Table ---
+  PGN [00000]: PRESENT (FPN 00004)
+  PGN [00001]: PRESENT (FPN 00003)
+  PGN [00002]: PRESENT (FPN 00005)
 ----------------------------------------
 Time slot  36
 	CPU 0: Put process  5 to run queue
@@ -109,10 +147,14 @@ Time slot  39
 Time slot  40
 	CPU 0: Put process  4 to run queue
 	CPU 0: Dispatched process  5
+libwrite:20
 --- PCB 5 Page Table ---
-  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00000]: PRESENT (FPN 00004)
+  PGN [00001]: PRESENT (FPN 00003)
+  PGN [00002]: PRESENT (FPN 00005)
 ----------------------------------------
 Time slot  41
+libwrite:1000
 Time slot  42
 	CPU 0: Processed  5 has finished
 	CPU 0: Dispatched process  2
@@ -185,3 +227,11 @@ Time slot  74
 Time slot  75
 	CPU 0: Processed  7 has finished
 	CPU 0 stopped
+
+============================================================
+           MULTILEVEL PAGING STATISTICS (MM64)
+============================================================
+  [+] Page Table Storage Size : 65536 bytes
+  [+] Memory Access Count     : 40 times
+============================================================
+

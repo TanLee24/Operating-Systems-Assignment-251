@@ -2,205 +2,262 @@ Time slot   0
 ld_routine
 Time slot   1
 	Loaded a process at input/proc/p0s, PID: 1 PRIO: 130
-	CPU 1: Dispatched process  1
-Time slot   2
-liballoc:4096
+	CPU 3: Dispatched process  1
+liballoc:0
 --- PCB 1 Page Table ---
-  PGN [00010]: PRESENT (FPN 00001)
-  PGN [00011]: PRESENT (FPN 00000)
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+Time slot   2
 ----------------------------------------
 	Loaded a process at input/proc/s3, PID: 2 PRIO: 39
-	CPU 3: Dispatched process  2
+	CPU 1: Dispatched process  2
 Time slot   3
-	CPU 1: Put process  1 to run queue
-	CPU 1: Dispatched process  1
-liballoc:4096
+	CPU 3: Put process  1 to run queue
+	CPU 3: Dispatched process  1
+liballoc:512
 --- PCB 1 Page Table ---
-  PGN [00010]: PRESENT (FPN 00003)
-  PGN [00011]: PRESENT (FPN 00002)
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00003)
+  PGN [00003]: PRESENT (FPN 00002)
 ----------------------------------------
 	Loaded a process at input/proc/m1s, PID: 3 PRIO: 15
 	CPU 2: Dispatched process  3
 Time slot   4
-liballoc:4096
+liballoc:0
 --- PCB 3 Page Table ---
-  PGN [00010]: PRESENT (FPN 00005)
-  PGN [00011]: PRESENT (FPN 00004)
+  PGN [00000]: PRESENT (FPN 00005)
+  PGN [00001]: PRESENT (FPN 00004)
 ----------------------------------------
-libfree:4096
+libfree:0
 --- PCB 1 Page Table ---
-  PGN [00010]: PRESENT (FPN 00005)
-  PGN [00011]: PRESENT (FPN 00004)
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00003)
+  PGN [00003]: PRESENT (FPN 00002)
+----------------------------------------
+	CPU 3: Put process  1 to run queue
+	CPU 3: Dispatched process  1
+liballoc:0
+--- PCB 1 Page Table ---
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00003)
+  PGN [00003]: PRESENT (FPN 00002)
 ----------------------------------------
 Time slot   5
-	CPU 1: Put process  1 to run queue
-liballoc:4096
+	CPU 1: Put process  2 to run queue
+	CPU 1: Dispatched process  2
+liballoc:512
 --- PCB 3 Page Table ---
-  PGN [00010]: PRESENT (FPN 00005)
-  PGN [00011]: PRESENT (FPN 00004)
-	CPU 1: Dispatched process  1
+  PGN [00000]: PRESENT (FPN 00005)
+  PGN [00001]: PRESENT (FPN 00004)
+  PGN [00002]: PRESENT (FPN 00006)
 ----------------------------------------
-liballoc:4196
---- PCB 1 Page Table ---
-  PGN [00010]: PRESENT (FPN 00005)
-  PGN [00011]: PRESENT (FPN 00004)
-----------------------------------------
-	CPU 3: Put process  2 to run queue
-	CPU 3: Dispatched process  2
 	Loaded a process at input/proc/s2, PID: 4 PRIO: 120
-libwrite:20
-Time slot   6
 	CPU 2: Put process  3 to run queue
-	CPU 2: Dispatched process  4
-	CPU 0: Dispatched process  3
-libfree:-1
-Time slot   7
-	CPU 3: Put process  2 to run queue
-	CPU 3: Dispatched process  2
-	CPU 1: Put process  1 to run queue
-	CPU 1: Dispatched process  1
+	CPU 2: Dispatched process  3
+libfree:0
+--- PCB 3 Page Table ---
+  PGN [00000]: PRESENT (FPN 00005)
+  PGN [00001]: PRESENT (FPN 00004)
+  PGN [00002]: PRESENT (FPN 00006)
+----------------------------------------
+Time slot   6
+libwrite:20
+--- PCB 1 Page Table ---
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00003)
+  PGN [00003]: PRESENT (FPN 00002)
+----------------------------------------
+	CPU 0: Dispatched process  4
+	CPU 3: Put process  1 to run queue
+	CPU 3: Dispatched process  1
 libread:20
 --- PCB 1 Page Table ---
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00003)
+  PGN [00003]: PRESENT (FPN 00002)
 ----------------------------------------
-liballoc:4096
+	CPU 1: Put process  2 to run queue
+Time slot   7
+	CPU 1: Dispatched process  2
+liballoc:0
 --- PCB 3 Page Table ---
-  PGN [00010]: PRESENT (FPN 00006)
+  PGN [00000]: PRESENT (FPN 00005)
+  PGN [00001]: PRESENT (FPN 00004)
+  PGN [00002]: PRESENT (FPN 00006)
 ----------------------------------------
 	Loaded a process at input/proc/m0s, PID: 5 PRIO: 120
-	CPU 2: Put process  4 to run queue
-	CPU 2: Dispatched process  5
-Time slot   8
-	CPU 0: Put process  3 to run queue
-	CPU 0: Dispatched process  4
-liballoc:4096
---- PCB 5 Page Table ---
-  PGN [00010]: PRESENT (FPN 00008)
-  PGN [00011]: PRESENT (FPN 00007)
-----------------------------------------
 libwrite:20
-	Loaded a process at input/proc/p1s, PID: 6 PRIO: 15
-liballoc:4096
+Time slot   8
+	CPU 2: Put process  3 to run queue
+	CPU 2: Dispatched process  5
+liballoc:0
 --- PCB 5 Page Table ---
-  PGN [00010]: PRESENT (FPN 00009)
+  PGN [00000]: PRESENT (FPN 00008)
+  PGN [00001]: PRESENT (FPN 00007)
+----------------------------------------
+	CPU 0: Put process  4 to run queue
+	CPU 0: Dispatched process  4
+	Loaded a process at input/proc/p1s, PID: 6 PRIO: 15
+liballoc:512
+--- PCB 5 Page Table ---
+  PGN [00000]: PRESENT (FPN 00008)
+  PGN [00001]: PRESENT (FPN 00007)
+  PGN [00002]: PRESENT (FPN 00009)
 ----------------------------------------
 Time slot   9
-	CPU 1: Put process  1 to run queue
-	CPU 1: Dispatched process  1
+	CPU 3: Put process  1 to run queue
+	CPU 3: Dispatched process  1
 libread:20
 --- PCB 1 Page Table ---
-  PGN [00010]: PRESENT (FPN 00009)
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00003)
+  PGN [00003]: PRESENT (FPN 00002)
 ----------------------------------------
-	CPU 3: Put process  2 to run queue
-	CPU 3: Dispatched process  3
-libfree:-1
+	CPU 1: Put process  2 to run queue
+	CPU 1: Dispatched process  3
+libfree:0
+--- PCB 3 Page Table ---
+  PGN [00000]: PRESENT (FPN 00005)
+  PGN [00001]: PRESENT (FPN 00004)
+  PGN [00002]: PRESENT (FPN 00006)
+----------------------------------------
 Time slot  10
 libwrite:20
 	CPU 0: Put process  4 to run queue
 	CPU 0: Dispatched process  6
-libfree:4096
---- PCB 3 Page Table ---
-  PGN [00010]: PRESENT (FPN 00009)
-----------------------------------------
 	CPU 2: Put process  5 to run queue
 	CPU 2: Dispatched process  2
+libfree:512
+--- PCB 3 Page Table ---
+  PGN [00000]: PRESENT (FPN 00005)
+  PGN [00001]: PRESENT (FPN 00004)
+  PGN [00002]: PRESENT (FPN 00006)
+----------------------------------------
 	Loaded a process at input/proc/s0, PID: 7 PRIO: 38
 Time slot  11
-	CPU 1: Put process  1 to run queue
+	CPU 1: Processed  3 has finished
 	CPU 1: Dispatched process  4
-	CPU 3: Processed  3 has finished
+	CPU 3: Put process  1 to run queue
 	CPU 3: Dispatched process  5
-libfree:-1
-liballoc:4096
+libfree:0
 --- PCB 5 Page Table ---
-  PGN [00010]: PRESENT (FPN 0000a)
-	CPU 2: Put process  2 to run queue
+  PGN [00000]: PRESENT (FPN 00008)
+  PGN [00001]: PRESENT (FPN 00007)
+  PGN [00002]: PRESENT (FPN 00009)
 ----------------------------------------
+liballoc:0
+--- PCB 5 Page Table ---
+  PGN [00000]: PRESENT (FPN 00008)
+  PGN [00001]: PRESENT (FPN 00007)
+  PGN [00002]: PRESENT (FPN 00009)
+----------------------------------------
+Time slot  12
+	CPU 2: Put process  2 to run queue
 	CPU 2: Dispatched process  1
 libread:20
 --- PCB 1 Page Table ---
-  PGN [00010]: PRESENT (FPN 0000a)
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00003)
+  PGN [00003]: PRESENT (FPN 00002)
 ----------------------------------------
-Time slot  12
 	CPU 0: Put process  6 to run queue
 	CPU 0: Dispatched process  6
 Time slot  13
-	CPU 1: Put process  4 to run queue
-	CPU 1: Dispatched process  7
 	CPU 3: Put process  5 to run queue
-	CPU 3: Dispatched process  2
+	CPU 3: Dispatched process  7
+	CPU 1: Put process  4 to run queue
+	CPU 1: Dispatched process  2
 	CPU 2: Put process  1 to run queue
-	CPU 2: Dispatched process  4
+	CPU 2: Dispatched process  5
+libwrite:20
+--- PCB 5 Page Table ---
+  PGN [00000]: PRESENT (FPN 00008)
+  PGN [00001]: PRESENT (FPN 00007)
+  PGN [00002]: PRESENT (FPN 00009)
+----------------------------------------
 Time slot  14
 	CPU 0: Put process  6 to run queue
-	CPU 0: Dispatched process  5
-libwrite:20
-	CPU 1: Put process  7 to run queue
-Time slot  15
-	CPU 1: Dispatched process  1
-libfree:-1
+	CPU 0: Dispatched process  4
+	CPU 3: Put process  7 to run queue
+	CPU 3: Dispatched process  1
+libfree:512
+--- PCB 1 Page Table ---
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00003)
+  PGN [00003]: PRESENT (FPN 00002)
+----------------------------------------
 libwrite:1000
-	CPU 3: Put process  2 to run queue
-	CPU 3: Dispatched process  6
+Time slot  15
+	CPU 1: Put process  2 to run queue
+	CPU 1: Dispatched process  6
 	Loaded a process at input/proc/s1, PID: 8 PRIO: 0
+	CPU 2: Processed  5 has finished
+	CPU 2: Dispatched process  7
 Time slot  16
-	CPU 0: Processed  5 has finished
-	CPU 0: Dispatched process  7
-	CPU 2: Put process  4 to run queue
-	CPU 2: Dispatched process  2
-	CPU 2: Processed  2 has finished
-	CPU 2: Dispatched process  4
+	CPU 0: Put process  4 to run queue
+	CPU 0: Dispatched process  2
+	CPU 3: Processed  1 has finished
+	CPU 3: Dispatched process  4
 Time slot  17
-	CPU 3: Put process  6 to run queue
-	CPU 3: Dispatched process  8
-	CPU 1: Processed  1 has finished
-	CPU 1: Dispatched process  6
-Time slot  18
-	CPU 0: Put process  7 to run queue
-	CPU 0: Dispatched process  7
-	CPU 3: Put process  8 to run queue
-	CPU 3: Dispatched process  8
-	CPU 2: Put process  4 to run queue
-	CPU 2: Dispatched process  4
 	CPU 1: Put process  6 to run queue
+	CPU 1: Dispatched process  8
+	CPU 0: Processed  2 has finished
+	CPU 0: Dispatched process  6
+Time slot  18
+	CPU 2: Put process  7 to run queue
+	CPU 2: Dispatched process  7
+	CPU 3: Put process  4 to run queue
+	CPU 3: Dispatched process  4
+	CPU 1: Put process  8 to run queue
+	CPU 1: Dispatched process  8
 Time slot  19
-	CPU 1: Dispatched process  6
+	CPU 0: Put process  6 to run queue
+	CPU 0: Dispatched process  6
 Time slot  20
-	CPU 0: Put process  7 to run queue
-	CPU 0: Dispatched process  7
-	CPU 3: Put process  8 to run queue
-	CPU 3: Dispatched process  8
-	CPU 2: Processed  4 has finished
-	CPU 2 stopped
-	CPU 1: Processed  6 has finished
-	CPU 1 stopped
-Time slot  21
-Time slot  22
-	CPU 0: Put process  7 to run queue
-	CPU 0: Dispatched process  7
-	CPU 3: Put process  8 to run queue
-	CPU 3: Dispatched process  8
-Time slot  23
-	CPU 3: Processed  8 has finished
+	CPU 2: Put process  7 to run queue
+	CPU 2: Dispatched process  7
+	CPU 3: Processed  4 has finished
 	CPU 3 stopped
+Time slot  21
+	CPU 1: Put process  8 to run queue
+	CPU 1: Dispatched process  8
+	CPU 0: Processed  6 has finished
+	CPU 0 stopped
+	CPU 2: Put process  7 to run queue
+	CPU 2: Dispatched process  7
+Time slot  22
+Time slot  23
+	CPU 1: Put process  8 to run queue
+	CPU 1: Dispatched process  8
+	CPU 2: Put process  7 to run queue
+	CPU 2: Dispatched process  7
 Time slot  24
-	CPU 0: Put process  7 to run queue
-	CPU 0: Dispatched process  7
+	CPU 1: Processed  8 has finished
+	CPU 1 stopped
 Time slot  25
 Time slot  26
-	CPU 0: Put process  7 to run queue
-	CPU 0: Dispatched process  7
+	CPU 2: Put process  7 to run queue
+	CPU 2: Dispatched process  7
 Time slot  27
 Time slot  28
-	CPU 0: Put process  7 to run queue
-	CPU 0: Dispatched process  7
+	CPU 2: Put process  7 to run queue
+	CPU 2: Dispatched process  7
 Time slot  29
-	CPU 0: Processed  7 has finished
-	CPU 0 stopped
+	CPU 2: Processed  7 has finished
+	CPU 2 stopped
 
 ============================================================
            MULTILEVEL PAGING STATISTICS (MM64)
 ============================================================
-  [+] Page Table Storage Size : 114688 bytes
-  [+] Memory Access Count     : 55 times
+  [+] Page Table Storage Size : 81920 bytes
+  [+] Memory Access Count     : 80 times
 ============================================================
 

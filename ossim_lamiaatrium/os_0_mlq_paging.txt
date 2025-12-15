@@ -5,31 +5,46 @@ Time slot   1
 	CPU 1: Dispatched process  1
 	Loaded a process at input/proc/p1s, PID: 2 PRIO: 15
 Time slot   2
-liballoc:4096
---- PCB 1 Page Table ---
-  PGN [00010]: PRESENT (FPN 00001)
-  PGN [00011]: PRESENT (FPN 00000)
-----------------------------------------
 	CPU 0: Dispatched process  2
-Time slot   3
-liballoc:4608
+liballoc:0
 --- PCB 1 Page Table ---
-  PGN [00010]: PRESENT (FPN 00001)
-  PGN [00011]: PRESENT (FPN 00000)
-  PGN [00012]: PRESENT (FPN 00003)
-  PGN [00013]: PRESENT (FPN 00002)
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+----------------------------------------
+Time slot   3
+liballoc:512
+--- PCB 1 Page Table ---
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00003)
+  PGN [00003]: PRESENT (FPN 00002)
 ----------------------------------------
 	Loaded a process at input/proc/p1s, PID: 3 PRIO: 0
 Time slot   4
-libfree:-1
-Time slot   5
-liballoc:4096
+libfree:0
 --- PCB 1 Page Table ---
-  PGN [00010]: PRESENT (FPN 00004)
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00003)
+  PGN [00003]: PRESENT (FPN 00002)
+----------------------------------------
+Time slot   5
+liballoc:0
+--- PCB 1 Page Table ---
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00003)
+  PGN [00003]: PRESENT (FPN 00002)
 ----------------------------------------
 	Loaded a process at input/proc/p1s, PID: 4 PRIO: 0
 Time slot   6
 libwrite:20
+--- PCB 1 Page Table ---
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00003)
+  PGN [00003]: PRESENT (FPN 00002)
+----------------------------------------
 Time slot   7
 	CPU 1: Put process  1 to run queue
 	CPU 1: Dispatched process  3
@@ -40,33 +55,51 @@ Time slot   9
 Time slot  10
 Time slot  11
 Time slot  12
-Time slot  13
 	CPU 1: Put process  3 to run queue
 	CPU 1: Dispatched process  1
 libread:20
 --- PCB 1 Page Table ---
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00003)
+  PGN [00003]: PRESENT (FPN 00002)
+Time slot  13
 ----------------------------------------
 libwrite:20
 Time slot  14
 	CPU 0: Put process  4 to run queue
 	CPU 0: Dispatched process  3
+Time slot  15
 libread:20
 --- PCB 1 Page Table ---
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00003)
+  PGN [00003]: PRESENT (FPN 00002)
 ----------------------------------------
-Time slot  15
-Time slot  16
 libwrite:20
+Time slot  16
 Time slot  17
 libread:20
 --- PCB 1 Page Table ---
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00003)
+  PGN [00003]: PRESENT (FPN 00002)
 ----------------------------------------
 Time slot  18
 	CPU 0: Processed  3 has finished
 	CPU 0: Dispatched process  4
+Time slot  19
 	CPU 1: Put process  1 to run queue
 	CPU 1: Dispatched process  1
-Time slot  19
-libfree:-1
+libfree:512
+--- PCB 1 Page Table ---
+  PGN [00000]: PRESENT (FPN 00001)
+  PGN [00001]: PRESENT (FPN 00000)
+  PGN [00002]: PRESENT (FPN 00003)
+  PGN [00003]: PRESENT (FPN 00002)
+----------------------------------------
 Time slot  20
 	CPU 1: Processed  1 has finished
 	CPU 1: Dispatched process  2
@@ -84,6 +117,6 @@ Time slot  25
            MULTILEVEL PAGING STATISTICS (MM64)
 ============================================================
   [+] Page Table Storage Size : 32768 bytes
-  [+] Memory Access Count     : 25 times
+  [+] Memory Access Count     : 40 times
 ============================================================
 

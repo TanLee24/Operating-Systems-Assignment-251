@@ -47,7 +47,6 @@ struct cpu_args {
 	int id;
 };
 
-
 static void * cpu_routine(void * args) {
 	struct timer_id_t * timer_id = ((struct cpu_args*)args)->timer_id;
 	int id = ((struct cpu_args*)args)->id;
@@ -127,8 +126,9 @@ static void * ld_routine(void * args) {
 			next_slot(timer_id);
 		}
 #ifdef MM_PAGING
-		krnl->mm = malloc(sizeof(struct mm_struct));
-        init_mm(krnl->mm, proc);
+		proc->mm = malloc(sizeof(struct mm_struct));
+        init_mm(proc->mm, proc);
+        
 		krnl->mram = mram;
 		krnl->mswp = mswp;
 		krnl->active_mswp = active_mswp;
@@ -277,5 +277,4 @@ int main(int argc, char * argv[]) {
 	print_paging_stats();
 
 	return 0;
-
 }
