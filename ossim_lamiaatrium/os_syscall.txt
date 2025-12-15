@@ -13,20 +13,24 @@ Time slot   9
 	CPU 0: Dispatched process  1
 liballoc:0
 --- PCB 1 Page Table ---
+  PGN [00000]: PRESENT (FPN 00000)
 ----------------------------------------
 Time slot  10
 libwrite:0
 --- PCB 1 Page Table ---
+  PGN [00000]: PRESENT (FPN 00000)
 ----------------------------------------
 Time slot  11
 	CPU 0: Put process  1 to run queue
 	CPU 0: Dispatched process  1
 libwrite:1
 --- PCB 1 Page Table ---
+  PGN [00000]: PRESENT (FPN 00000)
 ----------------------------------------
 Time slot  12
 libwrite:2
 --- PCB 1 Page Table ---
+  PGN [00000]: PRESENT (FPN 00000)
 ----------------------------------------
 Time slot  13
 	CPU 0: Put process  1 to run queue
@@ -34,3 +38,11 @@ Time slot  13
 Time slot  14
 	CPU 0: Processed  1 has finished
 	CPU 0 stopped
+
+============================================================
+           MULTILEVEL PAGING STATISTICS (MM64)
+============================================================
+  [+] Page Table Storage Size : 20480 bytes
+  [+] Memory Access Count     : 35 times
+============================================================
+

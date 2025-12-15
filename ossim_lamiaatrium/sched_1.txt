@@ -99,3 +99,11 @@ Time slot  45
 Time slot  46
 	CPU 0: Processed  4 has finished
 	CPU 0 stopped
+
+============================================================
+           MULTILEVEL PAGING STATISTICS (MM64)
+============================================================
+  [+] Page Table Storage Size : 16384 bytes
+  [+] Memory Access Count     : 0 times
+============================================================
+

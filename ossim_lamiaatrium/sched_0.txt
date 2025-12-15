@@ -50,3 +50,11 @@ Time slot  22
 Time slot  23
 	CPU 0: Processed  2 has finished
 	CPU 0 stopped
+
+============================================================
+           MULTILEVEL PAGING STATISTICS (MM64)
+============================================================
+  [+] Page Table Storage Size : 8192 bytes
+  [+] Memory Access Count     : 0 times
+============================================================
+
